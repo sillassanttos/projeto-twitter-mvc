@@ -44,6 +44,9 @@
           join usuarios u
             on t.id_usuario = u.id
          where t.id_usuario = :id_usuario
+            or t.id_usuario in (select id_usuario_seguindo
+                                  from usuarios_seguidores
+                                 where id_usuario = :id_usuario)
          order
             by t.data desc ";
 
@@ -52,6 +55,21 @@
       $stmt->execute();
 
       return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+    }
+
+
+    public function remover() {
+
+      $query = "delete from tweets where id = :id";
+
+      $stmt = $this->db->prepare($query);
+
+      $stmt->bindValue(':id', $this->__get('id'));
+
+      $stmt->execute();
+
+      return true;
 
     }
 
